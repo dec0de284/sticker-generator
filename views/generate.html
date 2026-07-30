@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Generate Sticker</title>
+  </head>
+  <body>
+    <h1>Generate Sticker</h1>
+    <div>
+      <table border="1" cellpadding="4" cellspacing="0" id="stickerTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>S/N</th>
+            <th>Print?</th>
+          </tr>
+        </thead>
+        <tbody id="stickerRows"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:8px;">
+      <button type="button" id="firstBtn"><<</button>
+      <button type="button" id="prevBtn"><</button>
+      <select id="pageSelect"></select>
+      <button type="button" id="nextBtn">></button>
+      <button type="button" id="lastBtn">>></button>
+    </div>
+    <div style="margin-top:16px;">
+      <h2>Selected for Printing</h2>
+      <table border="1" cellpadding="4" cellspacing="0" id="selectedTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>S/N</th>
+          </tr>
+        </thead>
+        <tbody id="selectedRows"></tbody>
+      </table>
+    </div>
+    <form method="post" action="/print" id="printForm">
+      <input type="hidden" name="selectedIds" id="selectedIdsInput" value="">
+      <div style="margin-top:8px;">
+        <button type="submit" id="printBtn">Print</button>
+        <button type="button" onclick="window.location='/'">Back</button>
+      </div>
+    </form>
+    <script>
+      const products = {{productsJson}};
+      const pageSize = 7;
+      let currentPage = 1;
+      const selectedIds = new Set();
+
+      const stickerRows = document.getElementById('stickerRows');
+      const selectedRows = document.getElementById('selectedRows');
+      const pageSelect = document.getElementById('pageSelect');
+      const firstBtn = document.getElementById('firstBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const lastBtn = document.getElementById('lastBtn');
+
+      function totalPages() {
+        return Math.max(1, Math.ceil(products.length / pageSize));
+      }
+
+      function renderPageSelect() {
+        const pages = totalPages();
+        pageSelect.innerHTML = '';
+        for (let i = 1; i <= pages; i++) {
+          const option = document.createElement('option');
+          option.value = i;
+          option.textContent = i;
+          if (i === currentPage) {
+            option.selected = true;
+          }
+          pageSelect.appendChild(option);
+        }
+      }
+
+      function renderStickerRows() {
+        const start = (currentPage - 1) * pageSize;
+        const pageItems = products.slice(start, start + pageSize);
+        stickerRows.innerHTML = '';
+
+        pageItems.forEach((product) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${product.id}</td>
+            <td>${product.sn || ''}</td>
+            <td><input type="checkbox" data-id="${product.id}" ${selectedIds.has(product.id) ? 'checked' : ''}></td>
+          `;
+          stickerRows.appendChild(row);
+        });
+      }
+
+      function renderSelectedRows() {
+        selectedRows.innerHTML = '';
+        products
+          .filter((product) => selectedIds.has(product.id))
+          .forEach((product) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${product.id}</td>
+              <td>${product.sn || ''}</td>
+            `;
+            selectedRows.appendChild(row);
+          });
+      }
+
+      function updateButtons() {
+        const pages = totalPages();
+        firstBtn.disabled = currentPage === 1;
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === pages;
+        lastBtn.disabled = currentPage === pages;
+      }
+
+      function render() {
+        renderPageSelect();
+        renderStickerRows();
+        renderSelectedRows();
+        updateButtons();
+      }
+
+      stickerRows.addEventListener('change', (event) => {
+        if (event.target.matches('input[type="checkbox"]')) {
+          const id = Number(event.target.dataset.id);
+          if (event.target.checked) {
+            if (selectedIds.size < 7) {
+              selectedIds.add(id);
+            } else {
+              event.target.checked = false;
+              alert('Only up to 7 entries may be selected for printing.');
+            }
+          } else {
+            selectedIds.delete(id);
+          }
+          renderSelectedRows();
+        }
+      });
+
+      const printForm = document.getElementById('printForm');
+      const selectedIdsInput = document.getElementById('selectedIdsInput');
+
+      printForm.addEventListener('submit', (event) => {
+        if (selectedIds.size === 0) {
+          event.preventDefault();
+          alert('Please select at least one item to print.');
+          return;
+        }
+
+        selectedIdsInput.value = Array.from(selectedIds).slice(0, 7).join(',');
+      });
+
+      firstBtn.addEventListener('click', () => {
+        currentPage = 1;
+        render();
+      });
+      prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage -= 1;
+          render();
+        }
+      });
+      nextBtn.addEventListener('click', () => {
+        if (currentPage < totalPages()) {
+          currentPage += 1;
+          render();
+        }
+      });
+      lastBtn.addEventListener('click', () => {
+        currentPage = totalPages();
+        render();
+      });
+      pageSelect.addEventListener('change', () => {
+        currentPage = Number(pageSelect.value);
+        render();
+      });
+
+      render();
+    </script>
+  </body>
+</html>

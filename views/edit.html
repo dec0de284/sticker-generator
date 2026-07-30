@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Edit Product Entry</title>
+  </head>
+  <body>
+    <h1>Edit Product Entry</h1>
+    <form method="post" action="/edit/{{id}}">
+      <div>Item: <input type="text" name="item" value="{{item}}"></div>
+      <div>Specification: <input type="text" name="spec" value="{{spec}}"></div>
+      <div>Power: <input type="text" name="power" value="{{power}}"></div>
+      <div>Management IP: <input type="text" name="mgmt_ip" value="{{mgmt_ip}}"></div>
+      <div>Username/Password: <input type="text" name="cred" value="{{cred}}"></div>
+      <div>WiFi SSID(5G): <input type="text" name="ssid_5g" value="{{ssid_5g}}"></div>
+      <div>WiFi SSID(2.4G): <input type="text" name="ssid_24g" value="{{ssid_24g}}"></div>
+      <div>WiFi Key(WPA)(2.4G/5G): <input type="text" name="wifi_key" value="{{wifi_key}}"></div>
+      <div>MAC: <input type="text" name="mac" value="{{mac}}"></div>
+      <div>PON S/N: <input type="text" name="pon_sn" value="{{pon_sn}}"></div>
+      <div>S/N: <input type="text" name="sn" value="{{sn}}"></div>
+      <div style="margin-top:8px;">
+        <button type="submit">Submit</button>
+        <button type="button" onclick="window.location='/modify'">Back</button>
+      </div>
+    </form>
+  </body>
+</html>

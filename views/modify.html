@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Modify Product Entry</title>
+  </head>
+  <body>
+    <h1>Modify Product Entry</h1>
+    <form method="get" action="/modify">
+      <div>S/N: <input type="text" name="sn" value="{{searchValue}}"></div>
+      <div style="margin-top:8px;"><button type="submit">Search</button></div>
+    </form>
+    <table border="1" cellpadding="4" cellspacing="0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Item</th>
+          <th>Specification</th>
+          <th>Power</th>
+          <th>Management IP</th>
+          <th>Username/Password</th>
+          <th>WiFi SSID(5G)</th>
+          <th>WiFi SSID(2.4G)</th>
+          <th>WiFi Key</th>
+          <th>MAC</th>
+          <th>PON S/N</th>
+          <th>S/N</th>
+          <th>Edit</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{tableRows}}
+      </tbody>
+    </table>
+    <div style="margin-top:8px;">
+      <button type="button" onclick="window.location='/'">Back</button>
+    </div>
+  </body>
+</html>

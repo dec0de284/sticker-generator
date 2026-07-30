@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Printable Stickers</title>
+    <style>
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        color: #000;
+      }
+      .sheet {
+        width: 210mm;
+        min-height: 297mm;
+        box-sizing: border-box;
+        padding: 0;
+      }
+      .pair-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0;
+      }
+      .sticker {
+        width: 100mm;
+        min-height: 40mm;
+        box-sizing: border-box;
+        padding: 4mm;
+        border: 1px solid #000;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-bottom: 0;
+      }
+      .sticker-inner {
+        display: flex;
+        flex-direction: column;
+        font-size: 11px;
+        line-height: 1.2;
+      }
+      .field-row {
+        display: flex;
+        justify-content: space-between;
+      }
+      .barcode {
+        display: block;
+        width: 92mm;
+        height: 18mm;
+      }
+      .barcode-text {
+        margin-top: 2px;
+        font-size: 10px;
+      }
+      .sticker-title {
+        font-weight: bold;
+      }
+      .row-label {
+        width: 45%;
+      }
+      .field-value {
+        width: 50%;
+        text-align: right;
+      }
+      .line-gap {
+        margin: 2px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sheet" id="printSheet"></div>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script>
+      const products = {{productsJson}};
+      const sheet = document.getElementById('printSheet');
+
+      function createSticker(product) {
+        const sticker = document.createElement('div');
+        sticker.className = 'sticker';
+
+        const inner = document.createElement('div');
+        inner.className = 'sticker-inner';
+
+        const rows = [
+          ['Item:', product.item || ''],
+          ['Specification:', product.specification || ''],
+          ['Power:', product.power || ''],
+          ['Management IP:', product.management_ip || ''],
+          ['Username/Password:', product.username_password || ''],
+        ];
+
+        rows.forEach(([label, value]) => {
+          const row = document.createElement('div');
+          row.className = 'field-row';
+          row.innerHTML = `<span class="row-label">${label}</span><span class="field-value">${value}</span>`;
+          inner.appendChild(row);
+        });
+
+        const wifiRow = document.createElement('div');
+        wifiRow.className = 'field-row';
+        wifiRow.innerHTML = `<span class="row-label">WiFi SSID(5G): ${product.wifi_ssid_5g || ''}</span><span class="field-value">WiFi SSID(2.4G): ${product.wifi_ssid_24g || ''}</span>`;
+        inner.appendChild(wifiRow);
+
+        const wifiKeyRow = document.createElement('div');
+        wifiKeyRow.className = 'field-row';
+        wifiKeyRow.innerHTML = `<span class="row-label">WiFi Key(WPA):</span><span class="field-value">${product.wifi_key || ''}</span>`;
+        inner.appendChild(wifiKeyRow);
+
+        const macLabel = document.createElement('div');
+        macLabel.textContent = 'MAC:';
+        inner.appendChild(macLabel);
+        const macSvg = document.createElement('svg');
+        macSvg.className = 'barcode';
+        macSvg.setAttribute('jsbarcode-format', 'CODE128');
+        macSvg.setAttribute('jsbarcode-value', product.mac || '');
+        macSvg.setAttribute('jsbarcode-textmargin', '0');
+        macSvg.setAttribute('jsbarcode-height', '30');
+        inner.appendChild(macSvg);
+        const macText = document.createElement('div');
+        macText.className = 'barcode-text';
+        macText.textContent = product.mac || '';
+        inner.appendChild(macText);
+
+        const ponLabel = document.createElement('div');
+        ponLabel.textContent = 'PON S/N:';
+        inner.appendChild(ponLabel);
+        const ponSvg = document.createElement('svg');
+        ponSvg.className = 'barcode';
+        ponSvg.setAttribute('jsbarcode-format', 'CODE128');
+        ponSvg.setAttribute('jsbarcode-value', product.pon_sn || '');
+        ponSvg.setAttribute('jsbarcode-textmargin', '0');
+        ponSvg.setAttribute('jsbarcode-height', '30');
+        inner.appendChild(ponSvg);
+        const ponText = document.createElement('div');
+        ponText.className = 'barcode-text';
+        ponText.textContent = product.pon_sn || '';
+        inner.appendChild(ponText);
+
+        const snLabel = document.createElement('div');
+        snLabel.textContent = 'S/N:';
+        inner.appendChild(snLabel);
+        const snSvg = document.createElement('svg');
+        snSvg.className = 'barcode';
+        snSvg.setAttribute('jsbarcode-format', 'CODE128');
+        snSvg.setAttribute('jsbarcode-value', product.sn || '');
+        snSvg.setAttribute('jsbarcode-textmargin', '0');
+        snSvg.setAttribute('jsbarcode-height', '30');
+        inner.appendChild(snSvg);
+        const snText = document.createElement('div');
+        snText.className = 'barcode-text';
+        snText.textContent = product.sn || '';
+        inner.appendChild(snText);
+
+        sticker.appendChild(inner);
+        return sticker;
+      }
+
+      function renderSheet() {
+        sheet.innerHTML = '';
+        const pairs = [];
+
+        for (let i = 0; i < products.length && i < 7; i++) {
+          pairs.push(products[i]);
+        }
+
+        for (let i = 0; i < pairs.length; i += 2) {
+          const pairRow = document.createElement('div');
+          pairRow.className = 'pair-row';
+
+          const leftSticker = createSticker(pairs[i]);
+          pairRow.appendChild(leftSticker);
+
+          const rightSticker = createSticker(pairs[i + 1] || { item: '', specification: '', power: '', management_ip: '', username_password: '', wifi_ssid_5g: '', wifi_ssid_24g: '', wifi_key: '', mac: '', pon_sn: '', sn: '' });
+          pairRow.appendChild(rightSticker);
+
+          sheet.appendChild(pairRow);
+        }
+
+        JsBarcode('.barcode').init();
+      }
+
+      renderSheet();
+      window.print();
+    </script>
+  </body>
+</html>
