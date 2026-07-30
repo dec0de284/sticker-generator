@@ -80,6 +80,10 @@ web_modules/
 .next
 out
 
+# Output PDF files
+output/
+*.pdf
+
 # Nuxt.js build / generate output
 .nuxt
 dist

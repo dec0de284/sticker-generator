@@ -1,0 +1,188 @@
+@page {
+  size: 210mm 297mm portrait;
+  margin: 0;
+}
+
+html,
+body {
+  width: 210mm;
+  height: 297mm;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: #000;
+}
+
+.print-page {
+  width: 210mm;
+  height: 297mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.print-wrapper {
+  width: 210mm;
+  height: 297mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 20cm;
+}
+
+td.sticker-cell {
+  width: 5cm;
+  min-width: 5cm;
+  max-width: 5cm;
+  height: 4cm;
+  min-height: 4cm;
+  max-height: 4cm;
+  box-sizing: border-box;
+  border: 1px solid #000;
+  padding: 0;
+  vertical-align: top;
+  overflow: hidden;
+}
+
+.sticker-content {
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  font-size: 7px;
+  line-height: 0.8;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sticker-row {
+  margin-bottom: 1px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
+}
+
+.sticker-row.barcode-value-row {
+  width: 100%;
+  justify-content: center;
+}
+
+.sticker-row.barcode-value-row > div {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.sticker-row:not(.barcode-value-row) > div:first-child {
+  white-space: nowrap;
+}
+
+.sticker-row:not(.barcode-value-row) > div:last-child {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.sticker-row span {
+  display: inline-block;
+}
+
+.ssid-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.ssid-row span {
+  width: 48%;
+  font-size: 7px;
+}
+
+.ssid-row span:first-child {
+  text-align: left;
+}
+
+.ssid-row span:last-child {
+  text-align: right;
+}
+
+.sticker-content > div {
+  margin-bottom: 5px;
+}
+
+.detail-label-line {
+  position: relative;
+  width: 100%;
+  min-height: 7px;
+  margin-bottom: 2px;
+}
+
+.detail-label-text {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  display: inline-block;
+}
+
+.detail-label-line .barcode {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: 0;
+}
+
+.detail-value {
+  text-align: center;
+  font-size: 7px;
+}
+
+.detail-value.small {
+  font-size: 6px;
+}
+
+.field-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.barcode {
+  display: block;
+  width: 2.70cm;
+  height: 13px;
+  margin-top: 2px;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.barcode-text {
+  margin-top: 2px;
+  font-size: 9px;
+}
+
+.sticker-title {
+  font-weight: bold;
+}
+
+.row-label {
+  width: 45%;
+}
+
+.field-value {
+  width: 50%;
+  text-align: right;
+}
+
+.line-gap {
+  margin: 2px 0;
+}

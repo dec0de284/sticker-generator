@@ -4,6 +4,10 @@ const homeController = require('../controllers/homeController');
 const productController = require('../controllers/productController');
 
 router.get('/', homeController.home);
+router.get('/testing', productController.showTestingMenu);
+router.get('/testing/clear', productController.clearDatabase);
+router.get('/testing/generate', productController.showTestingGeneratePage);
+router.post('/testing/generate', productController.generateDummyProducts);
 router.get('/register', productController.showRegistration);
 router.post('/register', productController.submitRegistration);
 router.get('/modify', productController.showModifyList);

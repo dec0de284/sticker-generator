@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Printable Stickers</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/print.css">
+  </head>
+  <body>
+    <div class="print-page">
+      <div class="print-wrapper">
+        <div class="sheet" id="printSheet"></div>
+      </div>
+    </div>
+    <script>
+      window.products = {{productsJson}};
+    </script>
+    <script src="/js/vendor/bwip-js-min.js"></script>
+    <script src="/js/product/printPage.js"></script>
+  </body>
+</html>

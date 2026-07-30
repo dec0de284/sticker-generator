@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Generate Dummy Products</title>
+    <link rel="stylesheet" href="/css/app.css">
+  </head>
+  <body>
+    <main class="page">
+      <h1>Generate Dummy Products</h1>
+      <form method="post" action="/testing/generate" id="dummyForm">
+        <div class="button-row align-center">
+          <label for="countInput">Dummy Product Count:</label>
+          <input id="countInput" name="count" type="text" inputmode="numeric" pattern="[0-9]*" value="7" maxlength="3" />
+          <button type="submit">Generate</button>
+        </div>
+        <div class="button-row">
+          <a class="button-link" href="/testing">Back</a>
+        </div>
+      </form>
+      <script src="/js/models/uiModels.js"></script>
+      <script src="/js/testing/generatePage.js"></script>
+    </main>
+  </body>
+</html>

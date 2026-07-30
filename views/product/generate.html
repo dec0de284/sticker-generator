@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Generate Sticker</title>
+    <link rel="stylesheet" href="/css/app.css">
+  </head>
+  <body>
+    <main class="page">
+      <h1>Generate Sticker</h1>
+      <div class="button-row">
+        <button type="button" id="selectAllBtn">Select All Page</button>
+        <button type="button" id="clearAllBtn">Clear Page</button>
+      </div>
+      <div class="table-wrapper">
+        <table border="1" cellpadding="4" cellspacing="0" id="stickerTable" class="full-width">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>S/N</th>
+              <th>Print?</th>
+            </tr>
+          </thead>
+          <tbody id="stickerRows"></tbody>
+        </table>
+      </div>
+      <div class="button-row">
+        <button type="button" id="firstBtn"><<</button>
+        <button type="button" id="prevBtn"><</button>
+        <select id="pageSelect"></select>
+        <button type="button" id="nextBtn">></button>
+        <button type="button" id="lastBtn">>></button>
+      </div>
+      <div class="button-row align-center top-margin">
+        <button type="button" id="clearSelectedBtn">Clear All Selected</button>
+        <span id="selectedCount">0 selected</span>
+      </div>
+      <h2>Selected for Printing (max 14)</h2>
+      <div class="table-wrapper">
+        <table border="1" cellpadding="4" cellspacing="0" id="selectedTable" class="full-width">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>S/N</th>
+            </tr>
+          </thead>
+          <tbody id="selectedRows"></tbody>
+        </table>
+      </div>
+      <form method="post" action="/print" id="printForm">
+        <input type="hidden" name="selectedIds" id="selectedIdsInput" value="">
+        <div class="button-row">
+          <button type="submit" id="printBtn">Print</button>
+          <a class="button-link" href="/">Back</a>
+        </div>
+      </form>
+      <script>
+        window.products = {{productsJson}};
+      </script>
+      <script src="/js/models/uiModels.js"></script>
+      <script src="/js/product/generatePage.js"></script>
+    </main>
+  </body>
+</html>

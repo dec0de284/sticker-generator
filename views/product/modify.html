@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Modify Product Entry</title>
+    <link rel="stylesheet" href="/css/app.css">
+  </head>
+  <body>
+    <main class="page">
+      <h1>Modify Product Entry</h1>
+      <form method="get" action="/modify">
+        <div class="button-row">
+          <label for="snSearch">S/N:</label>
+          <input id="snSearch" type="text" name="sn" value="{{searchValue}}">
+          <button type="submit">Search</button>
+        </div>
+      </form>
+    <div class="table-wrapper">
+      <table border="1" cellpadding="4" cellspacing="0" id="modifyTable" class="full-width">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Item</th>
+            <th>Specification</th>
+            <th>Power</th>
+            <th>Management IP</th>
+            <th>Username/Password</th>
+            <th>WiFi SSID(5G)</th>
+            <th>WiFi SSID(2.4G)</th>
+            <th>WiFi Key</th>
+            <th>MAC</th>
+            <th>PON S/N</th>
+            <th>S/N</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{tableRows}}
+        </tbody>
+      </table>
+    </div>
+    <div class="button-row">
+      <button type="button" id="firstBtn"><<</button>
+      <button type="button" id="prevBtn"><</button>
+      <select id="pageSelect"></select>
+      <button type="button" id="nextBtn">></button>
+      <button type="button" id="lastBtn">>></button>
+    </div>
+    <div class="button-row">
+      <a class="button-link" href="/">Back</a>
+    </div>
+    <script src="/js/models/uiModels.js"></script>
+    <script src="/js/product/modifyPage.js"></script>
+  </main>
+  </body>
+</html>

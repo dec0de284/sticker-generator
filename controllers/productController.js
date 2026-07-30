@@ -12,8 +12,16 @@ function escapeHTML(value) {
     .replace(/'/g, '&#39;');
 }
 
+function renderNotification(res, title, message) {
+  const htmlTemplate = fs.readFileSync(path.join(__dirname, '..', 'views', 'notification.html'), 'utf8');
+  const html = htmlTemplate
+    .replace(/{{title}}/g, escapeHTML(title))
+    .replace(/{{message}}/g, escapeHTML(message));
+  res.send(html);
+}
+
 exports.showRegistration = (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'views', 'register.html'));
+  res.sendFile(path.join(__dirname, '..', 'views', 'product', 'register.html'));
 };
 
 exports.submitRegistration = (req, res) => {
@@ -44,7 +52,7 @@ exports.submitRegistration = (req, res) => {
       if (err) {
         return res.status(500).send('Failed to save product');
       }
-      res.send('<p>Product registered successfully.</p><p><a href="/">Back to Home</a></p>');
+      renderNotification(res, 'Product Registered', 'Product registered successfully.');
     });
   });
 };
@@ -77,7 +85,7 @@ exports.showModifyList = (req, res) => {
       })
       .join('');
 
-    const htmlTemplate = fs.readFileSync(path.join(__dirname, '..', 'views', 'modify.html'), 'utf8');
+    const htmlTemplate = fs.readFileSync(path.join(__dirname, '..', 'views', 'product', 'modify.html'), 'utf8');
     const html = htmlTemplate
       .replace('{{tableRows}}', tableRows)
       .replace('{{searchValue}}', escapeHTML(searchSn));
@@ -92,15 +100,96 @@ exports.showGenerateSticker = (req, res) => {
     }
 
     const rawJson = JSON.stringify(products).replace(/</g, '\u003c');
-    const htmlTemplate = fs.readFileSync(path.join(__dirname, '..', 'views', 'generate.html'), 'utf8');
+    const htmlTemplate = fs.readFileSync(path.join(__dirname, '..', 'views', 'product', 'generate.html'), 'utf8');
     const html = htmlTemplate.replace('{{productsJson}}', rawJson);
     res.send(html);
   });
 };
 
+exports.showTestingMenu = (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'views', 'testing', 'testing.html'));
+};
+
+exports.clearDatabase = (req, res) => {
+  productModel.deleteAllProducts((err) => {
+    if (err) {
+      return res.status(500).send('Failed to clear database');
+    }
+
+    renderNotification(res, 'Successfully cleared Database', 'The product database has been cleared successfully.');
+  });
+};
+
+exports.showTestingGeneratePage = (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'views', 'testing', 'generate.html'));
+};
+
+function randomHex(length) {
+  const chars = '0123456789ABCDEF';
+  let result = '';
+  for (let i = 0; i < length; i += 1) {
+    result += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return result;
+}
+
+function randomDigits(length) {
+  let result = '';
+  for (let i = 0; i < length; i += 1) {
+    result += String(Math.floor(Math.random() * 10));
+  }
+  return result;
+}
+
+function createDummyProduct(index) {
+  return {
+    item: `Dummy Product ${index}`,
+    specification: 'Auto Generated',
+    power: 'DC 12V ⎓ 1A',
+    management_ip: '192.168.1.1',
+    username_password: 'user/user',
+    wifi_ssid_5g: 'FTTH-5G',
+    wifi_ssid_24g: 'FTTH',
+    wifi_key: '12345678',
+    mac: randomHex(12),
+    pon_sn: `GPON${randomHex(8)}`,
+    sn: `V${randomDigits(11)}`,
+  };
+}
+
+function insertDummyProducts(count, index, callback) {
+  if (index > count) {
+    return callback(null);
+  }
+
+  const product = createDummyProduct(index);
+  productModel.createProduct(product, (err) => {
+    if (err) {
+      return callback(err);
+    }
+    insertDummyProducts(count, index + 1, callback);
+  });
+}
+
+exports.generateDummyProducts = (req, res) => {
+  const count = Number(req.body.count);
+  if (!Number.isInteger(count) || count < 1 || count > 100) {
+    return res.redirect('/testing/generate');
+  }
+
+  insertDummyProducts(count, 1, (err) => {
+    if (err) {
+      return res.status(500).send('Failed to generate products');
+    }
+
+    renderNotification(res, 'Products Generated', `Generated ${count} dummy products successfully.`);
+  });
+};
+
+
 exports.showPrintPage = (req, res) => {
   const rawIds = (req.body.selectedIds || '').split(',').map((value) => Number(value.trim())).filter((value) => Number.isInteger(value) && value > 0);
-  const ids = Array.from(new Set(rawIds)).slice(0, 7);
+  const ids = Array.from(new Set(rawIds)).slice(0, 14);
 
   if (ids.length === 0) {
     return res.redirect('/generate');
@@ -112,7 +201,7 @@ exports.showPrintPage = (req, res) => {
     }
 
     const rawJson = JSON.stringify(products).replace(/</g, '\u003c');
-    const htmlTemplate = fs.readFileSync(path.join(__dirname, '..', 'views', 'print.html'), 'utf8');
+    const htmlTemplate = fs.readFileSync(path.join(__dirname, '..', 'views', 'product', 'print.html'), 'utf8');
     const html = htmlTemplate.replace('{{productsJson}}', rawJson);
     res.send(html);
   });
@@ -128,7 +217,7 @@ exports.showEditEntry = (req, res) => {
       return res.status(404).send('Product not found');
     }
 
-    const template = fs.readFileSync(path.join(__dirname, '..', 'views', 'edit.html'), 'utf8');
+    const template = fs.readFileSync(path.join(__dirname, '..', 'views', 'product', 'edit.html'), 'utf8');
     const html = template
       .replace(/{{id}}/g, escapeHTML(product.id))
       .replace(/{{item}}/g, escapeHTML(product.item))
@@ -200,7 +289,7 @@ exports.submitEditEntry = (req, res) => {
         if (err) {
           return res.status(500).send('Failed to update product');
         }
-        res.send('<p>Product updated successfully.</p><p><a href="/modify">Back to Modify Product Entry</a></p>');
+        renderNotification(res, 'Product Updated', 'Product updated successfully.');
       });
     });
   });

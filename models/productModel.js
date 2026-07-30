@@ -211,3 +211,15 @@ exports.updateProduct = (id, product, callback) => {
     });
   });
 };
+
+exports.deleteAllProducts = (callback) => {
+  getDb((err, db) => {
+    if (err) {
+      return callback(err);
+    }
+
+    db.run('DELETE FROM products', (err) => {
+      db.close(() => callback(err));
+    });
+  });
+};
