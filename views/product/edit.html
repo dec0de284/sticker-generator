@@ -21,6 +21,12 @@
         <div>MAC: <input type="text" name="mac" value="{{mac}}"></div>
         <div>PON S/N: <input type="text" name="pon_sn" value="{{pon_sn}}"></div>
         <div>S/N: <input type="text" name="sn" value="{{sn}}"></div>
+        <div>
+          Vendor:
+          <select name="vendor_id">
+            {{vendorOptions}}
+          </select>
+        </div>
         <div class="button-row">
           <button type="submit">Submit</button>
           <a class="button-link" href="/modify">Back</a>

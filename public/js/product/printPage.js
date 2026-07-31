@@ -121,8 +121,8 @@ class PrintStickerPage {
 
     for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
       const row = document.createElement('tr');
-      const leftIndex = rowIndex * 2;
-      const rightIndex = leftIndex + 1;
+      const leftIndex = rowIndex;
+      const rightIndex = rowIndex + rowCount;
       const leftProduct = this.products[leftIndex] || null;
       const rightProduct = this.products[rightIndex] || null;
 

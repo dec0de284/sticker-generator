@@ -92,6 +92,13 @@ select {
   padding: 6px 8px;
 }
 
+textarea {
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  padding: 6px 8px;
+  font: inherit;
+}
+
 form > div,
 form > .button-group {
   margin-bottom: 12px;
@@ -119,4 +126,38 @@ form > .button-group {
 }
 .detail-value.small {
   font-size: 6px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.status-select.status-yes {
+  background-color: #d8f3dc;
+  color: #0b5d1e;
+}
+
+.status-select.status-no {
+  background-color: #ffd6d6;
+  color: #7f1d1d;
+}
+
+.status-select.status-na {
+  background-color: #4b5563;
+  color: #fff;
+}
+
+.status-select.vendor-select {
+  background-color: #fff;
+  color: #000;
+}
+
+.report-remarks {
+  margin-top: 16px;
+}
+
+.report-remarks textarea {
+  width: 100%;
+  min-height: 100px;
+  box-sizing: border-box;
 }

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Saved Report</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/report-print.css">
+  </head>
+  <body class="report-body">
+    <main class="page report-page report-view-page">
+      <section class="report-header-card">
+        <div class="report-title-wrap">
+          <input class="report-title-input" type="text" value="{{report_title}}" readonly>
+        </div>
+      </section>
+
+      <section class="report-meta-card">
+        <div class="report-meta-grid">
+          <div class="meta-field">
+            <label>Report ID</label>
+            <input type="text" value="{{id}}" readonly>
+          </div>
+          <div class="meta-field">
+            <label>Generated</label>
+            <input type="text" value="{{generated_at}}" readonly>
+          </div>
+          <div class="meta-field">
+            <label>Tested By</label>
+            <input type="text" value="{{tested_by}}" readonly>
+          </div>
+          <div class="meta-field">
+            <label>Status</label>
+            <input type="text" value="{{status}}" readonly>
+          </div>
+          <div class="meta-field">
+            <label>Date In</label>
+            <input type="text" value="{{date_in}}" readonly>
+          </div>
+          <div class="meta-field">
+            <label>Date Out</label>
+            <input type="text" value="{{date_out}}" readonly>
+          </div>
+          <div class="meta-field">
+            <label>Serial Code</label>
+            <input type="text" value="{{serial_code}}" readonly>
+          </div>
+        </div>
+      </section>
+
+      <section class="report-table-card">
+        <div class="table-wrapper">
+          <table border="1" cellpadding="4" cellspacing="0" class="full-width">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>MODEL</th>
+                <th>VENDOR</th>
+                <th>S/N</th>
+                <th>POWER</th>
+                <th>PON</th>
+                <th>2.4G</th>
+                <th>5G</th>
+                <th>LAN</th>
+                <th>CATV</th>
+                <th>FINDINGS / ACTION TAKEN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{tableRows}}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="report-remarks-card">
+        <label>General Remarks:</label>
+        <textarea readonly>{{general_remarks}}</textarea>
+      </section>
+
+      <div class="button-row no-print">
+        <a class="button-link" href="/reports">Back</a>
+      </div>
+    </main>
+  </body>
+</html>

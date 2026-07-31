@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Saved Reports</title>
+    <link rel="stylesheet" href="/css/app.css">
+  </head>
+  <body>
+    <main class="page">
+      <h1>Saved Reports</h1>
+      <div class="button-row">
+        <a class="button-link" href="/report/select">Create New Report</a>
+        <a class="button-link" href="/">Back</a>
+      </div>
+      <div class="table-wrapper">
+        <table border="1" cellpadding="4" cellspacing="0" class="full-width">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Generated</th>
+              <th>Title</th>
+              <th>Tested By</th>
+              <th>Status</th>
+              <th>View</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{tableRows}}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

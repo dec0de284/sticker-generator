@@ -9,7 +9,7 @@
   <body>
     <main class="page">
       <h1>Register Product</h1>
-      <form method="post" action="/register">
+      <form method="post" action="/register/json" id="registerForm">
         <div>Item: <input type="text" name="item" value="G/EPON ONU"></div>
         <div>Specification: <input type="text" name="spec" value="V2802ACT"></div>
         <div>Power: <input type="text" name="power" value="DC 12V ⎓ 1A"></div>
@@ -21,11 +21,18 @@
         <div>MAC: <input type="text" name="mac" value=""></div>
         <div>PON S/N: <input type="text" name="pon_sn" value=""></div>
         <div>S/N: <input type="text" name="sn" value=""></div>
+        <div>
+          Vendor:
+          <select name="vendor_id">
+            {{vendorOptions}}
+          </select>
+        </div>
         <div class="button-row">
-          <button type="submit">Submit</button>
+          <button type="submit" id="registerSubmitBtn">Submit</button>
           <a class="button-link" href="/">Back</a>
         </div>
       </form>
+      <script src="/js/product/registerPage.js"></script>
     </main>
   </body>
 </html>

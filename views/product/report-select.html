@@ -3,26 +3,26 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Generate Sticker</title>
+    <title>Select Units For Report</title>
     <link rel="stylesheet" href="/css/app.css">
   </head>
   <body>
     <main class="page">
-      <h1>Generate Sticker</h1>
+      <h1>Generate Report</h1>
       <div class="button-row">
         <button type="button" id="selectAllBtn">Select All Page</button>
         <button type="button" id="clearAllBtn">Clear Page</button>
       </div>
       <div class="table-wrapper">
-        <table border="1" cellpadding="4" cellspacing="0" id="stickerTable" class="full-width">
+        <table border="1" cellpadding="4" cellspacing="0" id="reportSelectTable" class="full-width">
           <thead>
             <tr>
               <th>ID</th>
               <th>S/N</th>
-              <th>Print?</th>
+              <th>Select?</th>
             </tr>
           </thead>
-          <tbody id="stickerRows"></tbody>
+          <tbody id="reportSelectRows"></tbody>
         </table>
       </div>
       <div class="button-row">
@@ -36,7 +36,7 @@
         <button type="button" id="clearSelectedBtn">Clear All Selected</button>
         <span id="selectedCount">0 selected</span>
       </div>
-      <h2>Selected for Printing (max 14)</h2>
+      <h2>Selected For Report (max 14)</h2>
       <div class="table-wrapper">
         <table border="1" cellpadding="4" cellspacing="0" id="selectedTable" class="full-width">
           <thead>
@@ -48,11 +48,10 @@
           <tbody id="selectedRows"></tbody>
         </table>
       </div>
-      <form method="post" action="/print" id="printForm">
+      <form method="post" action="/report" id="reportForm">
         <input type="hidden" name="selectedIds" id="selectedIdsInput" value="">
         <div class="button-row">
-          <button type="submit" id="printBtn">Print</button>
-          <button type="submit" id="generateReportBtn" formaction="/report">Generate Report</button>
+          <button type="submit" id="generateReportBtn">Generate Report</button>
           <a class="button-link" href="/">Back</a>
         </div>
       </form>
@@ -61,7 +60,7 @@
         window.vendors = {{vendorsJson}};
       </script>
       <script src="/js/models/uiModels.js"></script>
-      <script src="/js/product/generatePage.js"></script>
+      <script src="/js/product/reportSelectPage.js"></script>
     </main>
   </body>
 </html>

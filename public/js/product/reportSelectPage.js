@@ -1,11 +1,11 @@
-class GenerateStickerPage {
+class ReportSelectionPage {
   constructor() {
     this.products = window.products || [];
     this.vendors = window.vendors || [];
     this.pageSize = 14;
     this.selectedIds = new Set();
 
-    this.stickerRows = document.getElementById('stickerRows');
+    this.tableRows = document.getElementById('reportSelectRows');
     this.selectedRows = document.getElementById('selectedRows');
     this.selectedCount = document.getElementById('selectedCount');
     this.pageSelect = document.getElementById('pageSelect');
@@ -16,20 +16,19 @@ class GenerateStickerPage {
     this.selectAllBtn = document.getElementById('selectAllBtn');
     this.clearAllBtn = document.getElementById('clearAllBtn');
     this.clearSelectedBtn = document.getElementById('clearSelectedBtn');
-    this.printForm = document.getElementById('printForm');
+    this.reportForm = document.getElementById('reportForm');
     this.selectedIdsInput = document.getElementById('selectedIdsInput');
-    this.generateReportBtn = document.getElementById('generateReportBtn');
 
     this.pagination = null;
     this.init();
   }
 
   init() {
-    if (!this.stickerRows || !this.pageSelect) return;
+    if (!this.tableRows || !this.pageSelect) return;
 
-    this.renderStickerRows();
+    this.renderRows();
     this.pagination = new AppModels.PaginationController({
-      rows: Array.from(this.stickerRows.children),
+      rows: Array.from(this.tableRows.children),
       pageSelect: this.pageSelect,
       firstBtn: this.firstBtn,
       prevBtn: this.prevBtn,
@@ -43,7 +42,7 @@ class GenerateStickerPage {
   }
 
   attachEvents() {
-    this.stickerRows.addEventListener('change', (event) => {
+    this.tableRows.addEventListener('change', (event) => {
       if (!event.target.matches('input[type="checkbox"]')) return;
 
       const id = Number(event.target.dataset.id);
@@ -52,7 +51,7 @@ class GenerateStickerPage {
           this.selectedIds.add(id);
         } else {
           event.target.checked = false;
-          alert('Only up to 14 entries may be selected for printing.');
+          alert('Only up to 14 entries may be selected for report generation.');
         }
       } else {
         this.selectedIds.delete(id);
@@ -65,25 +64,25 @@ class GenerateStickerPage {
     this.clearAllBtn.addEventListener('click', () => this.clearVisible());
     this.clearSelectedBtn.addEventListener('click', () => this.clearSelected());
 
-    this.printForm.addEventListener('submit', (event) => {
-      if (this.selectedIds.size === 0) {
+    this.reportForm.addEventListener('submit', (event) => {
+      if (this.vendors.length === 0) {
         event.preventDefault();
-        alert('Please select at least one item to print.');
+        alert('No vendors in the list yet. Please add vendors first.');
         return;
       }
 
-      const selectedIds = Array.from(this.selectedIds).slice(0, 14).join(',');
-      this.selectedIdsInput.value = selectedIds;
-
-      if (event.submitter && event.submitter.id === 'generateReportBtn' && this.vendors.length === 0) {
+      if (this.selectedIds.size === 0) {
         event.preventDefault();
-        alert('No vendors in the list yet. Please add vendors first.');
+        alert('Please select at least one item to generate a report.');
+        return;
       }
+
+      this.selectedIdsInput.value = Array.from(this.selectedIds).slice(0, 14).join(',');
     });
   }
 
-  renderStickerRows() {
-    this.stickerRows.innerHTML = '';
+  renderRows() {
+    this.tableRows.innerHTML = '';
     this.products.forEach((product) => {
       const row = document.createElement('tr');
       const checked = this.selectedIds.has(product.id) ? 'checked' : '';
@@ -92,7 +91,7 @@ class GenerateStickerPage {
         <td>${product.sn || ''}</td>
         <td><input type="checkbox" data-id="${product.id}" ${checked}></td>
       `;
-      this.stickerRows.appendChild(row);
+      this.tableRows.appendChild(row);
     });
   }
 
@@ -114,14 +113,14 @@ class GenerateStickerPage {
   }
 
   refreshCheckboxState() {
-    this.stickerRows.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+    this.tableRows.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
       const id = Number(checkbox.dataset.id);
       checkbox.checked = this.selectedIds.has(id);
     });
   }
 
   selectAllVisible() {
-    const visibleCheckboxes = Array.from(this.stickerRows.querySelectorAll('input[type="checkbox"]')).filter((checkbox) => checkbox.offsetParent !== null);
+    const visibleCheckboxes = Array.from(this.tableRows.querySelectorAll('input[type="checkbox"]')).filter((checkbox) => checkbox.offsetParent !== null);
     let remaining = 14 - this.selectedIds.size;
     visibleCheckboxes.forEach((checkbox) => {
       if (remaining <= 0) return;
@@ -135,7 +134,7 @@ class GenerateStickerPage {
   }
 
   clearVisible() {
-    const visibleCheckboxes = Array.from(this.stickerRows.querySelectorAll('input[type="checkbox"]')).filter((checkbox) => checkbox.offsetParent !== null);
+    const visibleCheckboxes = Array.from(this.tableRows.querySelectorAll('input[type="checkbox"]')).filter((checkbox) => checkbox.offsetParent !== null);
     visibleCheckboxes.forEach((checkbox) => {
       const id = Number(checkbox.dataset.id);
       this.selectedIds.delete(id);
@@ -150,7 +149,7 @@ class GenerateStickerPage {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => new GenerateStickerPage());
+  document.addEventListener('DOMContentLoaded', () => new ReportSelectionPage());
 } else {
-  new GenerateStickerPage();
+  new ReportSelectionPage();
 }

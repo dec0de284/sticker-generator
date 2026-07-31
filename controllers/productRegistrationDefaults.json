@@ -1,0 +1,13 @@
+{
+  "item": "G/EPON ONU",
+  "specification": "V8202ACT",
+  "power": "DC 12V ⎓ 1A",
+  "management_ip": "192.168.1.1",
+  "username_password": "user/user",
+  "wifi_ssid_5g": "FTTH-5G",
+  "wifi_ssid_24g": "FTTH",
+  "wifi_key": "12345678",
+  "mac": "",
+  "pon_sn": "",
+  "sn": ""
+}

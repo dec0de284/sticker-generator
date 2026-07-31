@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Vendors</title>
+    <link rel="stylesheet" href="/css/app.css">
+  </head>
+  <body>
+    <main class="page">
+      <h1>Vendors</h1>
+
+      <form method="post" action="/vendors/add">
+        <div class="button-row align-center">
+          <label for="vendorNameInput">Vendor Name:</label>
+          <input id="vendorNameInput" type="text" name="vendor_name" maxlength="255" value="">
+          <button type="submit">Add</button>
+        </div>
+      </form>
+
+      <form method="get" action="/vendors">
+        <div class="button-row align-center">
+          <label for="vendorSearch">Search:</label>
+          <input id="vendorSearch" type="text" name="name" value="{{searchValue}}">
+          <button type="submit">Search</button>
+        </div>
+      </form>
+
+      <div class="table-wrapper">
+        <table border="1" cellpadding="4" cellspacing="0" id="vendorTable" class="full-width">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Vendor Name</th>
+              <th>Controls</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{tableRows}}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="button-row">
+        <a class="button-link" href="/">Back</a>
+      </div>
+    </main>
+  </body>
+</html>

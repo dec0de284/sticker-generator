@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Defective ONU Report</title>
+    <link rel="stylesheet" href="/css/app.css?v=20260731c">
+    <link rel="stylesheet" href="/css/report-print.css?v=20260731c">
+  </head>
+  <body class="report-body">
+    <main class="page report-page" id="reportPage">
+      <section class="report-header-card">
+        <div class="report-branding">
+          <img src="/img/logo.svg" alt="Company Logo" class="report-logo">
+        </div>
+        <h1 class="report-title-wrap">
+          <input id="reportTitle" class="report-title-input" type="text" value="DEFECTIVE ONU REPORT">
+        </h1>
+      </section>
+
+      <section class="report-meta-card">
+        <div class="report-meta-grid">
+          <div class="meta-field">
+            <label for="testedBy">Tested By</label>
+            <input id="testedBy" type="text" value="">
+          </div>
+          <div class="meta-field">
+            <label for="statusField">Status</label>
+            <input id="statusField" type="text" value="{{status}}">
+          </div>
+          <div class="meta-field">
+            <label for="dateInField">Date In</label>
+            <input id="dateInField" type="date" value="{{dateIn}}">
+          </div>
+          <div class="meta-field">
+            <label for="dateOutField">Date Out</label>
+            <input id="dateOutField" type="date" value="">
+          </div>
+        </div>
+      </section>
+
+      <section class="report-table-card">
+        <div class="table-wrapper">
+          <table border="1" cellpadding="4" cellspacing="0" id="reportTable" class="full-width">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>MODEL</th>
+                <th>VENDOR</th>
+                <th>S/N</th>
+                <th>POWER</th>
+                <th>PON</th>
+                <th>2.4G</th>
+                <th>5G</th>
+                <th>LAN</th>
+                <th>CATV</th>
+                <th>FINDINGS / ACTION TAKEN</th>
+              </tr>
+            </thead>
+            <tbody id="reportRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="report-footer-grid">
+        <section class="report-remarks-card">
+          <label for="generalRemarks">General Remarks:</label>
+          <textarea id="generalRemarks" placeholder=""></textarea>
+        </section>
+      </section>
+
+      <div class="button-row no-print">
+        <button type="button" id="printReportBtn">Print Report (PDF)</button>
+        <button type="button" id="saveReportBtn">Save Report</button>
+        <a class="button-link" href="/report/select">Back</a>
+      </div>
+
+      <script type="application/json" id="reportProductsData">{{productsJson}}</script>
+      <script type="application/json" id="reportVendorsData">{{vendorsJson}}</script>
+      <script src="/js/product/reportPage.js?v=20260731c"></script>
+    </main>
+  </body>
+</html>
