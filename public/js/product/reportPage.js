@@ -2,6 +2,7 @@ class DefectiveReportPage {
   constructor() {
     this.products = this.readEmbeddedJson('reportProductsData', window.reportProducts || []);
     this.vendors = this.readEmbeddedJson('reportVendorsData', window.reportVendors || []);
+    this.savedReport = this.readEmbeddedJson('reportSavedData', null);
     this.rowsContainer = document.getElementById('reportRows');
     this.dateOutField = document.getElementById('dateOutField');
     this.printBtn = document.getElementById('printReportBtn');
@@ -13,6 +14,7 @@ class DefectiveReportPage {
     this.generalRemarksField = document.getElementById('generalRemarks');
 
     this.statusOptions = ['YES', 'NO', 'N/A'];
+    this.rowSource = [];
     this.boundBeforePrint = this.beforePrint.bind(this);
     this.boundAfterPrint = this.afterPrint.bind(this);
     this.init();
@@ -33,6 +35,7 @@ class DefectiveReportPage {
   init() {
     if (!this.rowsContainer) return;
 
+    this.applySavedReportMeta();
     this.renderRows();
     window.addEventListener('beforeprint', this.boundBeforePrint);
     window.addEventListener('afterprint', this.boundAfterPrint);
@@ -50,6 +53,31 @@ class DefectiveReportPage {
       this.saveBtn.addEventListener('click', () => this.saveReport());
     }
 
+  }
+
+  applySavedReportMeta() {
+    if (!this.savedReport || typeof this.savedReport !== 'object') {
+      return;
+    }
+
+    if (this.reportTitleField && this.savedReport.report_title) {
+      this.reportTitleField.value = this.savedReport.report_title;
+    }
+    if (this.testedByField && this.savedReport.tested_by) {
+      this.testedByField.value = this.savedReport.tested_by;
+    }
+    if (this.statusField && this.savedReport.status) {
+      this.statusField.value = this.savedReport.status;
+    }
+    if (this.dateInField && this.savedReport.date_in) {
+      this.dateInField.value = this.savedReport.date_in;
+    }
+    if (this.dateOutField && this.savedReport.date_out) {
+      this.dateOutField.value = this.savedReport.date_out;
+    }
+    if (this.generalRemarksField && this.savedReport.general_remarks) {
+      this.generalRemarksField.value = this.savedReport.general_remarks;
+    }
   }
 
   beforePrint() {
@@ -101,16 +129,17 @@ class DefectiveReportPage {
     }
   }
 
-  buildStatusSelect(fieldName) {
+  buildStatusSelect(fieldName, selectedValue) {
     const select = document.createElement('select');
-    select.className = 'status-select status-na';
+    select.className = 'status-select status-yes';
     select.dataset.field = fieldName;
+    const normalizedSelected = this.statusOptions.includes(selectedValue) ? selectedValue : 'YES';
 
     this.statusOptions.forEach((option) => {
       const optionEl = document.createElement('option');
       optionEl.value = option;
       optionEl.textContent = option;
-      if (option === 'N/A') {
+      if (option === normalizedSelected) {
         optionEl.selected = true;
       }
       select.appendChild(optionEl);
@@ -142,10 +171,12 @@ class DefectiveReportPage {
 
   renderRows() {
     this.rowsContainer.innerHTML = '';
+    const savedItems = this.savedReport && Array.isArray(this.savedReport.items) ? this.savedReport.items : null;
+    this.rowSource = savedItems || this.products;
 
-    this.products.forEach((product, index) => {
+    this.rowSource.forEach((product, index) => {
       const row = document.createElement('tr');
-      row.dataset.productId = product.id || '';
+      row.dataset.productId = product.product_id || product.id || '';
       row.dataset.position = String(index + 1);
 
       const modelText = product.specification || product.item || '';
@@ -155,17 +186,17 @@ class DefectiveReportPage {
       row.appendChild(this.createCell(modelText));
       row.appendChild(this.createCell(this.buildVendorSelect(product)));
       row.appendChild(this.createCell(snText));
-      row.appendChild(this.createCell(this.buildStatusSelect('power_status')));
-      row.appendChild(this.createCell(this.buildStatusSelect('pon_status')));
-      row.appendChild(this.createCell(this.buildStatusSelect('wifi_24g_status')));
-      row.appendChild(this.createCell(this.buildStatusSelect('wifi_5g_status')));
-      row.appendChild(this.createCell(this.buildStatusSelect('lan_status')));
-      row.appendChild(this.createCell(this.buildStatusSelect('catv_status')));
+      row.appendChild(this.createCell(this.buildStatusSelect('power_status', product.power_status)));
+      row.appendChild(this.createCell(this.buildStatusSelect('pon_status', product.pon_status)));
+      row.appendChild(this.createCell(this.buildStatusSelect('wifi_24g_status', product.wifi_24g_status)));
+      row.appendChild(this.createCell(this.buildStatusSelect('wifi_5g_status', product.wifi_5g_status)));
+      row.appendChild(this.createCell(this.buildStatusSelect('lan_status', product.lan_status)));
+      row.appendChild(this.createCell(this.buildStatusSelect('catv_status', product.catv_status)));
 
       const findingsInput = document.createElement('input');
       findingsInput.type = 'text';
       findingsInput.maxLength = 255;
-      findingsInput.value = 'REPLACED STICKERS';
+      findingsInput.value = product.findings || 'REPLACED STICKERS';
       findingsInput.className = 'full-width';
       findingsInput.dataset.field = 'findings';
       row.appendChild(this.createCell(findingsInput));
@@ -176,10 +207,10 @@ class DefectiveReportPage {
 
   collectRows() {
     return Array.from(this.rowsContainer.querySelectorAll('tr')).map((row, index) => {
-      const product = this.products[index] || {};
+      const product = this.rowSource[index] || this.products[index] || {};
       const rowData = {
         position: index + 1,
-        product_id: product.id || null,
+        product_id: product.product_id || product.id || null,
         vendor_id: product.vendor_id || null,
         item: product.item || '',
         specification: product.specification || product.spec || '',
@@ -218,7 +249,7 @@ class DefectiveReportPage {
     const dateOutValue = this.dateOutField && this.dateOutField.value ? this.dateOutField.value : this.getTodayIsoDate();
 
     return {
-      report_title: this.reportTitleField ? this.reportTitleField.value : 'DEFECTIVE ONU REPORT',
+      report_title: this.reportTitleField ? this.reportTitleField.value : 'ONU STATUS REPORT',
       tested_by: this.testedByField ? this.testedByField.value : '',
       status: this.statusField ? this.statusField.value : '',
       date_in: this.dateInField ? this.dateInField.value : '',

@@ -136,7 +136,7 @@ function buildReportPayload(body) {
 
   const nowIso = new Date().toISOString();
   return {
-    report_title: normalizeReportText(body.report_title || body.title || 'DEFECTIVE ONU REPORT') || 'DEFECTIVE ONU REPORT',
+    report_title: normalizeReportText(body.report_title || body.title || 'ONU STATUS REPORT') || 'ONU STATUS REPORT',
     tested_by: normalizeReportText(body.tested_by),
     status: normalizeReportStatus(body.status),
     date_in: normalizeReportDate(body.date_in),
@@ -164,6 +164,23 @@ function getDateInFromProducts(products) {
   }
 
   return toReportDateLabel(new Date(Math.min(...validTimes)).toISOString());
+}
+
+function renderReportHtml(products, vendors, options = {}) {
+  const reportData = options.reportData || null;
+  const statusValue = typeof options.status === 'string' ? options.status : 'Tested';
+  const dateInValue = typeof options.dateIn === 'string' ? options.dateIn : getDateInFromProducts(products);
+  const rawProductsJson = JSON.stringify(products || []).replace(/</g, '\u003c');
+  const rawVendorsJson = JSON.stringify(vendors || []).replace(/</g, '\u003c');
+  const rawSavedReportJson = JSON.stringify(reportData).replace(/</g, '\u003c');
+
+  const htmlTemplate = readView('product', 'report.html');
+  return htmlTemplate
+    .replace('{{productsJson}}', rawProductsJson)
+    .replace('{{vendorsJson}}', rawVendorsJson)
+    .replace('{{savedReportJson}}', rawSavedReportJson)
+    .replace(/{{dateIn}}/g, escapeHTML(dateInValue))
+    .replace(/{{status}}/g, escapeHTML(statusValue));
 }
 
 function buildProductFromBody(body, options = {}) {
@@ -388,14 +405,11 @@ exports.showReportPage = (req, res) => {
         return res.status(500).send('Failed to load vendors');
       }
 
-      const rawProductsJson = JSON.stringify(products).replace(/</g, '\u003c');
-      const rawVendorsJson = JSON.stringify(vendors).replace(/</g, '\u003c');
-      const htmlTemplate = readView('product', 'report.html');
-      const html = htmlTemplate
-        .replace('{{productsJson}}', rawProductsJson)
-        .replace('{{vendorsJson}}', rawVendorsJson)
-        .replace(/{{dateIn}}/g, escapeHTML(getDateInFromProducts(products)))
-        .replace(/{{status}}/g, 'Tested');
+      const html = renderReportHtml(products, vendors, {
+        reportData: null,
+        status: 'Tested',
+        dateIn: getDateInFromProducts(products),
+      });
       res.send(html);
     });
   });
@@ -488,11 +502,71 @@ exports.showSavedReport = (req, res) => {
         .replace(/{{date_in}}/g, escapeHTML(report.date_in || ''))
         .replace(/{{date_out}}/g, escapeHTML(report.date_out || ''))
         .replace(/{{generated_at}}/g, escapeHTML(toReportDateLabel(report.generated_at || '')))
-        .replace(/{{serial_code}}/g, escapeHTML(report.serial_code || ''))
         .replace(/{{general_remarks}}/g, escapeHTML(report.general_remarks || ''))
         .replace('{{tableRows}}', reportRows || '<tr><td colspan="11">No report items found.</td></tr>');
 
       res.send(html);
+    });
+  });
+};
+
+exports.showSavedReportPrint = (req, res) => {
+  const reportId = Number(req.params.id);
+
+  productModel.getReportById(reportId, (reportErr, report) => {
+    if (reportErr) {
+      return res.status(500).send('Failed to load report');
+    }
+    if (!report) {
+      return res.status(404).send('Report not found');
+    }
+
+    productModel.getReportItemsByReportId(reportId, (itemsErr, items) => {
+      if (itemsErr) {
+        return res.status(500).send('Failed to load report items');
+      }
+
+      productModel.getVendors('', (vendorErr, vendors) => {
+        if (vendorErr) {
+          return res.status(500).send('Failed to load vendors');
+        }
+
+        const normalizedItems = normalizeReportItems(items || []);
+        const products = normalizedItems.map((item) => ({
+          id: item.product_id,
+          vendor_id: item.vendor_id,
+          item: item.item,
+          specification: item.specification,
+          power: item.power,
+          management_ip: item.management_ip,
+          username_password: item.username_password,
+          wifi_ssid_5g: item.wifi_ssid_5g,
+          wifi_ssid_24g: item.wifi_ssid_24g,
+          wifi_key: item.wifi_key,
+          mac: item.mac,
+          pon_sn: item.pon_sn,
+          sn: item.sn,
+        }));
+
+        const reportData = {
+          id: report.id,
+          report_title: report.report_title || 'ONU STATUS REPORT',
+          tested_by: report.tested_by || '',
+          status: report.status || 'Tested',
+          date_in: normalizeReportDate(report.date_in),
+          date_out: normalizeReportDate(report.date_out),
+          general_remarks: report.general_remarks || '',
+          items: normalizedItems,
+        };
+
+        const html = renderReportHtml(products, vendors, {
+          reportData,
+          status: reportData.status,
+          dateIn: reportData.date_in,
+        });
+
+        return res.send(html);
+      });
     });
   });
 };

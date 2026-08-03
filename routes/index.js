@@ -20,6 +20,7 @@ router.post('/report', productController.showReportPage);
 router.post('/report/save', productController.saveReport);
 router.get('/reports', productController.showReports);
 router.get('/reports/:id', productController.showSavedReport);
+router.get('/reports/:id/print', productController.showSavedReportPrint);
 router.get('/vendors', productController.showVendors);
 router.post('/vendors/add', productController.addVendor);
 router.get('/vendors/edit/:id', productController.showEditVendor);
