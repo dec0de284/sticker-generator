@@ -1,7 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const rateLimit = require('express-rate-limit');
 const homeController = require('../controllers/homeController');
 const productController = require('../controllers/productController');
+
+const routeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+router.use(routeLimiter);
 
 router.get('/', homeController.home);
 router.get('/testing', productController.showTestingMenu);
