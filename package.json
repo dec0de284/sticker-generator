@@ -9,6 +9,6 @@
   "dependencies": {
     "bwip-js": "^4.11.2",
     "express": "^5.2.1",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^6.0.1"
   }
 }
