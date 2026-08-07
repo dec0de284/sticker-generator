@@ -166,13 +166,17 @@ function getDateInFromProducts(products) {
   return toReportDateLabel(new Date(Math.min(...validTimes)).toISOString());
 }
 
+function serializeJsonForHtml(value) {
+  return JSON.stringify(value).replace(/</g, '\\u003c');
+}
+
 function renderReportHtml(products, vendors, options = {}) {
   const reportData = options.reportData || null;
   const statusValue = typeof options.status === 'string' ? options.status : 'Tested';
   const dateInValue = typeof options.dateIn === 'string' ? options.dateIn : getDateInFromProducts(products);
-  const rawProductsJson = JSON.stringify(products || []).replace(/</g, '\u003c');
-  const rawVendorsJson = JSON.stringify(vendors || []).replace(/</g, '\u003c');
-  const rawSavedReportJson = JSON.stringify(reportData).replace(/</g, '\u003c');
+  const rawProductsJson = serializeJsonForHtml(products || []);
+  const rawVendorsJson = serializeJsonForHtml(vendors || []);
+  const rawSavedReportJson = serializeJsonForHtml(reportData);
 
   const htmlTemplate = readView('product', 'report.html');
   return htmlTemplate
@@ -356,8 +360,8 @@ exports.showGenerateSticker = (req, res) => {
         return res.status(500).send('Failed to load vendors');
       }
 
-      const rawProductsJson = JSON.stringify(products).replace(/</g, '\u003c');
-      const rawVendorsJson = JSON.stringify(vendors).replace(/</g, '\u003c');
+      const rawProductsJson = serializeJsonForHtml(products);
+      const rawVendorsJson = serializeJsonForHtml(vendors);
       const htmlTemplate = readView('product', 'generate.html');
       const html = htmlTemplate
         .replace('{{productsJson}}', rawProductsJson)
@@ -378,8 +382,8 @@ exports.showReportSelection = (req, res) => {
         return res.status(500).send('Failed to load vendors');
       }
 
-      const rawProductsJson = JSON.stringify(products).replace(/</g, '\u003c');
-      const rawVendorsJson = JSON.stringify(vendors).replace(/</g, '\u003c');
+      const rawProductsJson = serializeJsonForHtml(products);
+      const rawVendorsJson = serializeJsonForHtml(vendors);
       const htmlTemplate = readView('product', 'report-select.html');
       const html = htmlTemplate
         .replace('{{productsJson}}', rawProductsJson)
@@ -796,7 +800,7 @@ exports.showPrintPage = (req, res) => {
       return res.status(500).send('Failed to load products for printing');
     }
 
-    const rawJson = JSON.stringify(products).replace(/</g, '\u003c');
+    const rawJson = serializeJsonForHtml(products);
     const htmlTemplate = fs.readFileSync(path.join(__dirname, '..', 'views', 'product', 'print.html'), 'utf8');
     const html = htmlTemplate.replace('{{productsJson}}', rawJson);
     res.send(html);
